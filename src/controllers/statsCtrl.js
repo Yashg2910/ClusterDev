@@ -1,4 +1,4 @@
-const deviceModel = require("../db/models");
+const deviceModel = require("../db/devicesModel");
 let ejs = require('ejs');
 
 const packageStatsCtrl = {
