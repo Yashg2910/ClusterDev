@@ -1,12 +1,10 @@
 const cron = require("node-cron");
 const deviceModel = require("../db/devicesModel");
 const dumpsModel = require("../db/dumpsModel");
-const { parse } = require('json2csv');
-const fields = ['google_id', 'package_name', 'package_installed_at', 'client_ip', 'createdAt'];
-const opts = { fields };
 var moment = require('moment');
 const {writeFile, rm} = require('fs').promises;
 const awsApi = require("../api/aws");
+const {parse} = require('json2csv');
 
 const dumpsCron = {
   startService() {
@@ -27,6 +25,9 @@ async function dumpData() {
   const devices = await deviceModel.find({createdAt: {$gte: yesterdayStartDate.toISOString(), $lt: todayStartDate.toISOString()}});
   if (devices.length === 0) return;
   try {
+    const opts = { 
+      fields: ['google_id', 'package_name', 'package_installed_at', 'client_ip', 'createdAt'] 
+    };
     const csv = parse(devices, opts);
     const filename = `${yesterdayStartDate.format("DD-MM-YYYY")} - ${todayStartDate.format("DD-MM-YYYY")} devices data.csv`;
     await writeCSV(filename, csv);
