@@ -8,8 +8,11 @@ const DumpsSchema = new mongoose.Schema({
   "dumpDate": {
     type: Date,
     required: true
+  },
+  "removed": {
+    type: Boolean
   }
-}, 
+},
 {
   timestamps: true,
   versionKey: false

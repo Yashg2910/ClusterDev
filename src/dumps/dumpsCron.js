@@ -46,13 +46,13 @@ async function writeCSV(filename, data){
 async function diskCleanup() {
   const todayStartDate = moment().startOf('day');
   const yesterdayStartDate = moment().subtract(1, 'day').startOf('day');
-  const dumpedFiles = await dumpsModel.find({dumpDate: {$gte: yesterdayStartDate.toISOString(), $lt: todayStartDate.toISOString()}});
+  const dumpFile = await dumpsModel.findOne({dumpDate: {$gte: yesterdayStartDate.toISOString(), $lt: todayStartDate.toISOString()}, removed: {$exists: false}}).lean();
 
-  if (dumpedFiles.length === 0) return;
-  const dumpFile = dumpedFiles[0];
+  if (!dumpFile) return;
 
   try {
     rm(`${dumpsBasePath}/${dumpFile.filename}`);
+    await dumpsModel.updateOne({_id: dumpFile._id}, {...dumpFile, removed: true});
     console.log("File removed from local storage", dumpFile.filename);
   } catch (e) {
     console.error(`Error deleting file ${dumpFile.filename} from local storage`, e);
