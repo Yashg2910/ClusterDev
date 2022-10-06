@@ -2,6 +2,7 @@ const express = require('express');
 const mongodb = require('./src/db/mongodb');
 const devicesCtrl = require("./src/controllers/devicesCtrl");
 const packageStatsCtrl = require("./src/controllers/statsCtrl");
+const dumpsCron = require("./src/dumps/dumpsCron");
 
 const app = express();
 app.use(express.json());
@@ -28,3 +29,5 @@ app.listen(PORT, (error) =>{
         console.log("Error occurred, server can't start", error);
     }
 );
+
+dumpsCron.startService();
